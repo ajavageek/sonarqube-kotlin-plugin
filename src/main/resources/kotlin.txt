@@ -1,0 +1,7 @@
+fun hello1(name: String): String {
+    return "Hello $name"
+}
+
+fun hello2(name: String): String = "Hello $name"
+
+fun hello3(name: String) = "Hello $name"
