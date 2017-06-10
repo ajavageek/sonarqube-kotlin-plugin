@@ -1,6 +1,7 @@
 package ch.frankel.sonarqube.kotlin.plugin
 
 import ch.frankel.sonarqube.kotlin.plugin.Kotlin.Companion.KEY
+import ch.frankel.sonarqube.kotlin.plugin.KotlinChecks.Companion.REPOSITORY_KEY
 import org.sonar.api.batch.fs.FileSystem
 import org.sonar.api.batch.fs.InputFile
 import org.sonar.api.batch.fs.InputFile.Type.MAIN
@@ -41,7 +42,7 @@ class KotlinSensor(private val fs: FileSystem) : Sensor {
         }
     }
 
-    private fun <L : AbstractKotlinParserListener> AbstractKotlinCheck<L>.ruleKey() = RuleKey.of(KotlinChecks.REPOSITORY_KEY, key)
+    private fun <L : AbstractKotlinParserListener> AbstractKotlinCheck<L>.ruleKey() = RuleKey.of(REPOSITORY_KEY, key)
 
     private fun FileSystem.inputFiles(type: InputFile.Type): MutableIterable<InputFile> = with(predicates()) {
         return inputFiles(this.and(hasLanguage(KEY), hasType(type)))
