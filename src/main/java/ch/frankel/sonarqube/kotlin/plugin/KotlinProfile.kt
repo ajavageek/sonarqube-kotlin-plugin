@@ -1,7 +1,7 @@
 package ch.frankel.sonarqube.kotlin.plugin
 
-import ch.frankel.sonarqube.kotlin.plugin.CheckList.Companion.PROFILE_NAME
 import ch.frankel.sonarqube.kotlin.plugin.Kotlin.Companion.LABEL
+import ch.frankel.sonarqube.kotlin.plugin.KotlinChecks.Companion.PROFILE_NAME
 import org.sonar.api.profiles.ProfileDefinition
 import org.sonar.api.profiles.RulesProfile
 import org.sonar.api.profiles.RulesProfile.create

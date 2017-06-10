@@ -8,6 +8,7 @@ import org.sonar.api.batch.fs.InputFile.Type.TEST
 import org.sonar.api.batch.sensor.Sensor
 import org.sonar.api.batch.sensor.SensorContext
 import org.sonar.api.batch.sensor.SensorDescriptor
+import org.sonar.api.rule.RuleKey
 
 
 class KotlinSensor(private val fs: FileSystem) : Sensor {
@@ -23,14 +24,26 @@ class KotlinSensor(private val fs: FileSystem) : Sensor {
     }
 
     override fun execute(context: SensorContext) {
-        val issue = context.newIssue().forRule(NoExplicitReturnUnitCheck.RULE_KEY)
-        val inputFile = sources.iterator().next()
-        val location = issue.newLocation().on(inputFile).message("Chto sluchilos'?")
-        location.at(inputFile.selectLine(18))
-        issue.at(location).save()
+        sources.forEach { inputFile: InputFile ->
+            KotlinChecks.checks.forEach { check ->
+                val violations = check.violations(inputFile.file())
+                violations.forEach { (lineNumber) ->
+                    with(context.newIssue().forRule(check.ruleKey())) {
+                        val location = newLocation().apply {
+                            on(inputFile)
+                            message(check.message)
+                            at(inputFile.selectLine(lineNumber))
+                        }
+                        at(location).save()
+                    }
+                }
+            }
+        }
     }
-}
 
-private fun FileSystem.inputFiles(type: InputFile.Type): MutableIterable<InputFile> = with(predicates()) {
-    return inputFiles(this.and(hasLanguage(KEY), hasType(type)))
+    private fun <L : AbstractKotlinParserListener> AbstractKotlinCheck<L>.ruleKey() = RuleKey.of(KotlinChecks.REPOSITORY_KEY, key)
+
+    private fun FileSystem.inputFiles(type: InputFile.Type): MutableIterable<InputFile> = with(predicates()) {
+        return inputFiles(this.and(hasLanguage(KEY), hasType(type)))
+    }
 }
