@@ -28,7 +28,7 @@ interface KotlinCheck {
     val message: String
 }
 
-abstract class AbstractKotlinCheck<L : AbstractKotlinParserListener>(protected val parserListenerClass: KClass<L>) : KotlinCheck {
+abstract class AbstractKotlinCheck<L : AbstractKotlinParserListener>(val parserListenerClass: KClass<L>) : KotlinCheck {
 
     internal fun violations(file: File): List<Violation> {
         val stream = CharStreams.fromFileName(file.absolutePath)
